@@ -1,0 +1,25 @@
+FROM rockylinux9-gis:geos 
+
+RUN cd ~/ && git clone https://gitea.osgeo.org/postgis/postgis.git
+
+RUN cat << EOF | sudo tee -a /etc/ld.so.conf
+/usr/lib/
+/usr/lib64/
+/usr/local/sfcgal/lib64/
+/usr/local/gdal/lib/
+/usr/local/geos/lib64/
+EOF
+
+RUN sudo ldconfig
+
+RUN echo "build and install postgis" && \
+  cd ~/postgis && \
+  ./autogen.sh && \
+  ./configure --with-pgconfig="${GPHOME}"/usr/local/cloudberry-db/bin/pg_config \
+    --with-raster --without-topology \
+    --with-gdalconfig=/usr/local/gdal/bin/gdal-config \
+    --with-sfcgal=/usr/local/sfcgal/bin/sfcgal-config \
+    --with-geosconfig=/usr/local/geos/bin/geos-config && \
+  make -j$(nproc) && sudo make -j$(nproc) install
+
+

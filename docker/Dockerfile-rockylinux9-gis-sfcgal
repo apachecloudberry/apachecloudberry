@@ -1,0 +1,13 @@
+FROM apachecloudberry/apachecloudberry:rockylinux9-gis-cgal
+
+RUN cd ~/ && git clone https://gitlab.com/sfcgal/SFCGAL.git 
+
+RUN echo "build and install sfcgal" && \ 
+  cd ~/SFCGAL && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/sfcgal .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+

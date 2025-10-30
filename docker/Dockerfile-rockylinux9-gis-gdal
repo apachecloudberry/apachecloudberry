@@ -1,0 +1,13 @@
+FROM apachecloudberry/apachecloudberry:rockylinux9-gis-base
+
+RUN cd ~/ && git clone https://github.com/OSGeo/gdal.git
+
+RUN echo "build and install gdal" && \ 
+  cd ~/gdal && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/gdal .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+

@@ -1,0 +1,13 @@
+FROM rockylinux9-gis:sfcgal 
+
+RUN cd ~/ && git clone https://github.com/libgeos/geos.git 
+
+RUN echo "build and install geos" && \ 
+  cd ~/geos && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/geos .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+

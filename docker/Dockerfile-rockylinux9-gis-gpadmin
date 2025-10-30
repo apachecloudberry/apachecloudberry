@@ -1,0 +1,24 @@
+FROM rockylinux9-gis:postgis
+
+RUN cd ~/ && rm -fr SFGAL cgal cloudberry gdal geos postgis
+
+RUN cat << EOF >> /home/gpadmin/.bashrc 
+# Add Cloudberry entries
+if [ -f /usr/local/cloudberry-db/greenplum_path.sh ]; then
+  source /usr/local/cloudberry-db/greenplum_path.sh
+fi
+## US English with UTF-8 character encoding
+export LANG=en_US.UTF-8
+EOF
+
+RUN echo "Set up SSH for passwordless access" && \
+  mkdir -p /home/gpadmin/.ssh && \
+  ssh-keygen -t rsa -b 2048 -C 'apache-cloudberry-dev' -f /home/gpadmin/.ssh/id_rsa -N "" && \
+  cat /home/gpadmin/.ssh/id_rsa.pub >> /home/gpadmin/.ssh/authorized_keys && \
+  chmod 700 /home/gpadmin/.ssh && \
+  chmod 600 /home/gpadmin/.ssh/authorized_keys && \
+  chmod 644 /home/gpadmin/.ssh/id_rsa.pub
+
+RUN sudo yum clean all \
+    && sudo rm -rf /var/cache/yum
+

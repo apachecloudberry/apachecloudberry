@@ -1,0 +1,13 @@
+FROM apachecloudberry/apachecloudberry:rockylinux9-gis-gdal
+
+RUN cd ~/ && git clone https://github.com/CGAL/cgal.git
+
+RUN echo "build and install cgal" && \ 
+  cd ~/cgal && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/cgal .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+

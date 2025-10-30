@@ -1,0 +1,14 @@
+FROM apachecloudberry/apachecloudberry:rockylinux9-cb-base 
+
+RUN sudo dnf install -y epel-release 
+  
+RUN sudo dnf install -y libtool boost-devel gmp-devel mpfr-devel \
+      pcre-devel  protobuf-c bzip2 gcc make subversion gcc-c++ \
+      sqlite-devel libxml2-devel  expat-devel libcurl-devel \
+      json-c python3-devel 
+
+RUN sudo dnf install -y --enablerepo=crb protobuf protobuf-devel protobuf-c-devel json-c-devel swig 
+
+RUN sudo dnf install -y --enablerepo=epel proj-devel
+
+
