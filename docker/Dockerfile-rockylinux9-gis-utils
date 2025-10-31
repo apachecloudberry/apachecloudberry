@@ -7,3 +7,17 @@ RUN sudo yum -y install golang && \
     export GOPATH=$HOME/go && \
     export PATH=$PATH:$GOPATH/bin && \
     make
+
+RUN cd ~/ && git clone https://github.com/apache/cloudberry-pxf.git
+
+RUN cd ~/cloudberry-pxf && \
+    source /usr/local/cloudberry-db/greenplum_path.sh && \
+    export GOPATH=$HOME/go && \
+    export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin && \
+    go install github.com/onsi/ginkgo/ginkgo@latest 
+
+RUN sudo yum -y install java-11-openjdk
+
+RUN cd ~/cloudberry-pxf && \
+    export PATH=$PATH:/usr/local/cloudberry-db/bin && \
+    make
