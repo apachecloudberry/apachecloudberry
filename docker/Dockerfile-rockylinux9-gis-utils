@@ -1,0 +1,9 @@
+FROM apachecloudberry/apachecloudberry:rockylinux9-gis-postgis
+
+RUN cd ~/ && git clone https://github.com/apache/cloudberry-backup.git
+
+RUN sudo yum -y install golang && \
+    cd ~/cloudberry-backup && \
+    export GOPATH=$HOME/go && \
+    export PATH=$PATH:$GOPATH/bin && \
+    make
