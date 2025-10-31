@@ -1,4 +1,4 @@
-FROM rockylinux9-gis:sfcgal 
+FROM apachecloudberry/apachecloudberry:rockylinux9-gis-sfcgal 
 
 RUN cd ~/ && git clone https://github.com/libgeos/geos.git 
 

@@ -1,5 +1,7 @@
 FROM apachecloudberry/apachecloudberry:rockylinux9-gis-cgal
 
+RUN sudo yum -y install json-devel --enablerepo=epel
+
 RUN cd ~/ && git clone https://gitlab.com/sfcgal/SFCGAL.git 
 
 RUN echo "build and install sfcgal" && \ 

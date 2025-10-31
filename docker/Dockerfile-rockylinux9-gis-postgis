@@ -1,4 +1,4 @@
-FROM rockylinux9-gis:geos 
+FROM apachecloudberry/apachecloudberry:rockylinux9-gis-geos
 
 RUN cd ~/ && git clone https://gitea.osgeo.org/postgis/postgis.git
 
