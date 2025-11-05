@@ -1,0 +1,20 @@
+ARG ARCH
+FROM apachecloudberry/apachecloudberry:rockylinux9-cb-base-${ARCH}
+
+RUN sudo yum -y install git golang java-11-openjdk
+
+RUN cd ~/ && git clone https://github.com/apache/cloudberry-backup.git && \
+    cd ~/cloudberry-backup && \
+    export GOPATH=$HOME/go && \
+    export PATH=$PATH:$GOPATH/bin && \
+    make
+
+RUN cd ~/ && git clone https://github.com/apache/cloudberry-pxf.git && \
+    cd ~/cloudberry-pxf && \
+    source /usr/local/cloudberry-db/greenplum_path.sh && \
+    export GOPATH=$HOME/go && \
+    export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin && \
+    export PATH=$PATH:/usr/local/cloudberry-db/bin && \
+    go install github.com/onsi/ginkgo/ginkgo@latest && \
+    make
+

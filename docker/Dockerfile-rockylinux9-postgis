@@ -1,0 +1,94 @@
+ARG ARCH
+FROM apachecloudberry/apachecloudberry:rockylinux9-cb-base-${ARCH} 
+
+RUN sudo dnf install -y epel-release 
+  
+RUN sudo dnf install -y libtool boost-devel gmp-devel mpfr-devel \
+      pcre-devel  protobuf-c bzip2 gcc make subversion gcc-c++ \
+      sqlite-devel libxml2-devel  expat-devel libcurl-devel \
+      json-c python3-devel 
+
+RUN sudo dnf install -y --enablerepo=crb protobuf protobuf-devel protobuf-c-devel json-c-devel swig 
+
+RUN sudo dnf install -y --enablerepo=epel proj-devel
+
+#
+# gdal
+#
+RUN cd ~/ && git clone https://github.com/OSGeo/gdal.git
+
+RUN echo "build and install gdal" && \ 
+  cd ~/gdal && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/gdal .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+#
+# cgal
+#
+RUN cd ~/ && git clone https://github.com/CGAL/cgal.git
+
+RUN echo "build and install cgal" && \ 
+  cd ~/cgal && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/cgal .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+#
+# sfcgal
+#
+RUN sudo yum -y install json-devel --enablerepo=epel
+
+RUN cd ~/ && git clone https://gitlab.com/sfcgal/SFCGAL.git 
+
+RUN echo "build and install sfcgal" && \ 
+  cd ~/SFCGAL && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/sfcgal .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+#
+# geos
+#
+RUN cd ~/ && git clone https://github.com/libgeos/geos.git 
+
+RUN echo "build and install geos" && \ 
+  cd ~/geos && \
+  mkdir build && \
+  cd build && \
+  cmake --install-prefix /usr/local/geos .. && \
+  cmake --build . && \
+  cmake --build . --target install
+
+#
+# postgis
+#
+RUN cd ~/ && git clone https://gitea.osgeo.org/postgis/postgis.git
+
+RUN cat << EOF | sudo tee -a /etc/ld.so.conf
+/usr/lib/
+/usr/lib64/
+/usr/local/sfcgal/lib64/
+/usr/local/gdal/lib/
+/usr/local/geos/lib64/
+EOF
+
+RUN sudo ldconfig
+
+RUN echo "build and install postgis" && \
+  cd ~/postgis && \
+  ./autogen.sh && \
+  ./configure --with-pgconfig="${GPHOME}"/usr/local/cloudberry-db/bin/pg_config \
+    --with-raster --without-topology \
+    --with-gdalconfig=/usr/local/gdal/bin/gdal-config \
+    --with-sfcgal=/usr/local/sfcgal/bin/sfcgal-config \
+    --with-geosconfig=/usr/local/geos/bin/geos-config && \
+  make -j$(nproc) && sudo make -j$(nproc) install
+
+
